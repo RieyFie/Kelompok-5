@@ -1,81 +1,255 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-  <!-- Metadata dasar dokumen HTML -->
-  <meta charset="UTF-8"> <!-- Set karakter encoding -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Agar halaman responsif di perangkat mobile -->
-  <title>Catatan Keuangan</title> <!-- Judul halaman -->
-  <link rel="stylesheet" href="styles.css"> <!-- Link ke file CSS eksternal -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beranda - Dashboard Keuangan</title>
+    <!-- Bootstrap CSS Link -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Custom Stylesheet -->
+    <link href="assets/css/style.css" rel="stylesheet">
+    <style>
+        /* Floating action button style */
+        .fab-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 50%;
+            padding: 20px;
+            font-size: 24px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .fab-btn:hover {
+            background-color: #0056b3;
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .table th, .table td {
+            border-radius: 12px !important;
+        }
+
+        .table {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .table td:first-child, .table th:first-child {
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+        }
+
+        .table td:last-child, .table th:last-child {
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+    </style>
 </head>
-  
-<body>
-  <!-- Kontainer utama yang membungkus semua elemen halaman -->
-  <div class="container">
-    <h1>Catatan Keuangan</h1> <!-- Judul halaman -->
+<body class="bg-light">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="main.html">Dashboard Keuangan</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="main.html">Beranda</a></li>
+                    <li class="nav-item"><a class="nav-link" href="laporan.html">Laporan/Statistik</a></li>
+                    <li class="nav-item"><a class="nav-link" href="chart.html">Pie Chart</a></li>
+                    <li class="nav-item"><a class="nav-link" href="akun.html">Akun</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-    <!-- Form Input: untuk menambahkan transaksi baru -->
-    <form id="transaction-form">
-      <!-- Input tanggal transaksi -->
-      <label for="tanggal">Tanggal:</label>
-      <input type="date" id="tanggal" name="tanggal" required />
+    <!-- Main Content -->
+    <div class="container my-5">
+        <div class="text-center mb-4">
+            <h1>Hai!</h1>
+            <p>Selamat datang kembali di dashboard keuangan Anda!</p>
+        </div>
 
-      <!-- Input tipe uang (Pemasukan atau Pengeluaran) -->
-      <label for="tipe_uang">Tipe Uang:</label>
-      <select id="tipe_uang" name="tipe_uang" required>
-        <option value="">Pilih Tipe</option> <!-- Placeholder -->
-        <option value="Pemasukan">Pemasukan</option>
-        <option value="Pengeluaran">Pengeluaran</option>
-      </select>
+        <!-- Financial Info Section -->
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card text-white bg-success h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Saldo</h5>
+                        <h2 id="balance">Rp 0</h2>
+                    </div>
+                </div>
+            </div>
 
-      <!-- Input kategori transaksi -->
-      <label for="kategori">Kategori:</label>
-      <select id="kategori" name="kategori" required></select> <!-- Kategori akan diisi secara dinamis menggunakan JavaScript -->
+            <div class="col-md-4 mb-4">
+                <div class="card text-white bg-primary h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Pemasukan</h5>
+                        <h2 id="income">Rp 0</h2>
+                    </div>
+                </div>
+            </div>
 
-      <!-- Input deskripsi transaksi -->
-      <label for="deskripsi">Deskripsi:</label>
-      <input type="text" id="deskripsi" name="deskripsi" placeholder="Masukkan deskripsi" />
+            <div class="col-md-4 mb-4">
+                <div class="card text-white bg-danger h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Pengeluaran</h5>
+                        <h2 id="expense">Rp 0</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-      <!-- Input jumlah uang -->
-      <label for="jumlah">Jumlah:</label>
-      <input type="number" id="jumlah" name="jumlah" placeholder="Masukkan jumlah" required />
-
-      <!-- Tombol submit untuk menambah transaksi -->
-      <button type="submit">Tambah Transaksi</button>
-    </form>
-
-    <!-- Ringkasan: total pemasukan, pengeluaran, dan saldo akan dimuat di sini secara dinamis -->
-    <div id="summary" class="summary-container">
-      <!-- Total Pemasukan, Pengeluaran, dan Saldo akan ditampilkan di sini melalui JavaScript -->
+        <!-- Table Section -->
+        <div class="mb-4">
+            <h3>Riwayat Keuangan</h3>
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Tanggal</th>
+                        <th scope="col">Kategori</th>
+                        <th scope="col">Pemasukan (Rp)</th>
+                        <th scope="col">Pengeluaran (Rp)</th>
+                        <th scope="col">Keterangan</th>
+                        <th scope="col">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="financeData">
+                    <!-- contoh row -->
+                    <tr>
+                        <td>01/12/2024</td>
+                        <td>Pemasukan</td>
+                        <td>Rp 500,000</td>
+                        <td>-</td>
+                        <td>Gaji</td>
+                        <td><button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal" onclick="openEditModal(this)">Edit</button></td>
+                    </tr>
+                    <tr>
+                        <td>02/12/2024</td>
+                        <td>Pengeluaran</td>
+                        <td>-</td>
+                        <td>Rp 200,000</td>
+                        <td>Belanja</td>
+                        <td><button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal" onclick="openEditModal(this)">Edit</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <!-- Tombol untuk membuka halaman grafik pengeluaran -->
-    <button id="go-to-chart">Lihat Grafik Pengeluaran</button>
+    <a  class="fab-btn">
+        <i class="fas fa-plus"></i>
+    </a>
 
-    <!-- Tabel Data: untuk menampilkan daftar transaksi -->
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th> <!-- Kolom ID transaksi -->
-          <th>Tanggal</th> <!-- Kolom tanggal transaksi -->
-          <th>Kategori</th> <!-- Kolom kategori transaksi -->
-          <th>Deskripsi</th> <!-- Kolom deskripsi transaksi -->
-          <th>Tipe Uang</th> <!-- Kolom tipe uang (Pemasukan/Pengeluaran) -->
-          <th>Jumlah</th> <!-- Kolom jumlah uang -->
-        </tr>
-      </thead>
-      <tbody id="transaction-list">
-        <!-- Daftar transaksi akan dimuat di sini menggunakan JavaScript -->
-      </tbody>
-    </table>
-  </div>
+    <!-- Modal Edit Form -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Transaksi Keuangan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm">
+                        <div class="mb-3">
+                            <label for="editAmount" class="form-label">Jumlah</label>
+                            <input type="number" class="form-control" id="editAmount" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editCategory" class="form-label">Kategori</label>
+                            <select class="form-select" id="editCategory" required>
+                                <option value="Pemasukan">Pemasukan</option>
+                                <option value="Pengeluaran">Pengeluaran</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editDescription" class="form-label">Keterangan</label>
+                            <textarea class="form-control" id="editDescription" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
-  <!------------------------------ Bagian edit dan hapus data yang sudah di submit ------------------------------>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+    <script>
+        // Function to open the edit modal with pre-filled data
+        function openEditModal(button) {
+            var row = button.closest('tr');
+            var date = row.cells[0].textContent;
+            var category = row.cells[1].textContent;
+            var income = row.cells[2].textContent;
+            var expense = row.cells[3].textContent;
+            var description = row.cells[4].textContent;
 
-  
+            // Populate the modal fields
+            document.getElementById('editAmount').value = category === 'Pemasukan' ? income.replace('Rp ', '').replace(',', '') : expense.replace('Rp ', '').replace(',', '');
+            document.getElementById('editCategory').value = category;
+            document.getElementById('editDescription').value = description;
+            document.getElementById('editRow').dataset.rowIndex = row.rowIndex;  // Store row index for later
+        }
 
+        // Handle form submission for editing
+        document.getElementById('editForm').addEventListener('submit', function(e) {
+            e.preventDefault();
 
+            var amount = document.getElementById('editAmount').value;
+            var category = document.getElementById('editCategory').value;
+            var description = document.getElementById('editDescription').value;
 
-  <!-- Menghubungkan ke file JavaScript eksternal -->
-  <script src="script.js"></script>
+            // Get the row to update
+            var rowIndex = document.getElementById('editRow').dataset.rowIndex;
+            var row = document.getElementById('financeData').rows[rowIndex];
+
+            // Update the row with the new values
+            if (category === 'Pemasukan') {
+                row.cells[2].textContent = `Rp ${parseInt(amount).toLocaleString()}`;
+                row.cells[3].textContent = '-';
+            } else {
+                row.cells[3].textContent = `Rp ${parseInt(amount).toLocaleString()}`;
+                row.cells[2].textContent = '-';
+            }
+            row.cells[1].textContent = category;
+            row.cells[4].textContent = description;
+
+            updateBalance();
+
+            var modal = new bootstrap.Modal(document.getElementById('editModal'));
+            modal.hide();
+        });
+
+        // Update balance for income, expense, and total
+        function updateBalance() {
+            var incomeTotal = 0;
+            var expenseTotal = 0;
+
+            var rows = document.querySelectorAll('#financeData tr');
+            rows.forEach(row => {
+                if (row.cells[1].textContent === 'Pemasukan') {
+                    incomeTotal += parseInt(row.cells[2].textContent.replace('Rp ', '').replace(',', ''));
+                } else if (row.cells[1].textContent === 'Pengeluaran') {
+                    expenseTotal += parseInt(row.cells[3].textContent.replace('Rp ', '').replace(',', ''));
+                }
+            });
+
+            document.getElementById('income').textContent = `Rp ${incomeTotal.toLocaleString()}`;
+            document.getElementById('expense').textContent = `Rp ${expenseTotal.toLocaleString()}`;
+            document.getElementById('balance').textContent = `Rp ${(incomeTotal - expenseTotal).toLocaleString()}`;
+        }
+
+        // Initial balance update
+        updateBalance();
+    </script>
 </body>
 </html>
