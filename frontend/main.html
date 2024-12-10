@@ -89,25 +89,15 @@
             </a>
           </li>
           <li class="nav-item">
-            <button class="btn btn-custom" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Akun</button>
+            <a class="nav-link">
+              <button class="btn btn-custom" type="button" onclick="window.location.href='login.html';">Keluar</button>
+            </a>
           </li>
         </ul>
       </div>
     </div>
   </nav>
-  
-  <!-- Offcanvas untuk Akun -->
-  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
-    <div class="offcanvas-header">
-      <h5 class="offcanvas-title" id="offcanvasRightLabel">Akun</h5>
-      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body">
-      <div>Profil</div>
-      <div>Pengaturan</div>
-    </div>
-  </div>
-
+  <!-- Middle -->
   <div class="container mt-4">
     <div class="mb-4">
       <h2>Selamat datang!</h2>
@@ -324,7 +314,7 @@ function editRecord(button) {
 
   document.getElementById("editDate").value = cells[0].textContent;
   document.getElementById("editType").value = cells[1].textContent.toLowerCase();
-  document.getElementById("editNominal").value = cells[2].textContent.replace(/Rp|, /g, '');
+  document.getElementById("editNominal").value = cells[2].textContent.replace("Rp", "").replace(/,/g, "");
   document.getElementById("editCategory").value = cells[3].textContent.toLowerCase();
   document.getElementById("editDescription").value = cells[4].textContent;
 
@@ -333,10 +323,7 @@ function editRecord(button) {
   modal.show();
 
   // Tambahkan event listener untuk menyimpan perubahan
-  document.getElementById("updateRecordBtn").addEventListener("click", function () {
-    if (!currentEditingRow) return;
-
-    const cells = currentEditingRow.querySelectorAll("td");
+  document.getElementById("updateRecordBtn").onclick = function () {
     // Update data di tabel
     cells[0].textContent = document.getElementById("editDate").value;
     cells[1].textContent = document.getElementById("editType").value;
@@ -345,13 +332,9 @@ function editRecord(button) {
     cells[4].textContent = document.getElementById("editDescription").value;
 
     updateTotal();
-
-    const modal= bootstrap.Modal.getInstance(document.getElementById("editRecordModal"));
     // Tutup modal
     modal.hide();
-
-    currentEditingRow = null;
-  });
+  };
 }
 
 function deleteRecord(button) {
