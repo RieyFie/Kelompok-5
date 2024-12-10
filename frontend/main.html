@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catatan Keuangan</title>
+  <!-- Link Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Link Font Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
+  <style>
+    .navbar-brand {
+      font-family: 'Poppins Bold', sans-serif;
+      color: #1a4e47;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+    }
+    .navbar-nav .nav-link:hover {
+      color: #1a4e47 !important;
+    }
+    .card {
+      border-radius: 15px;
+      border-color: #41ada0;
+      background-color: #41ada0;
+      color: white;
+      text-align: center;
+    }
+    .add-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: #41ada0;
+      color: white;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .add-button:hover {
+      background-color: #41ada0;
+    }
+    .btn-custom {
+        background-color: #41ada0;
+        color: white;
+        border: none; 
+        padding: 8px 16px; 
+        font-size: 16px;
+        border-radius: 4px; 
+        transition: background-color 0.3s ease; 
+    }
+    .btn-custom:hover {
+    background-color: #3a9b8b; /* Warna lebih gelap saat hover */
+    }
+    .modal-content {
+      background-color: #f1f1f1;
+    }
+    .modal-footer .btn-primary {
+      background-color: #4dc5b7;
+      border-color: #4dc5b7;
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body class="bg-success bg-opacity-25">
+  <!-- Navbar -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="#"><h1>Catatan Keuangan</h1></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link">
+                <button class="btn btn-custom" type="button" onclick="window.location.href='main.html';">Beranda</button>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link">
+                <button class="btn btn-custom" type="button" onclick="window.location.href='chart.html';">Statistik</button>
+            </a>
+          </li>
+          <li class="nav-item">
+            <button class="btn btn-custom" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Akun</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Offcanvas untuk Akun -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasRightLabel">Akun</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div>Profil</div>
+      <div>Pengaturan</div>
+    </div>
+  </div>
+
+  <div class="container mt-4">
+    <div class="mb-4">
+      <h2>Selamat datang!</h2>
+    </div>
+    <div class="row text-center mb-4">
+      <div class="col-md-4 mb-3">
+        <div class="card p-3">
+          <h4>Saldo</h4>
+          <h5 id="balanceTotal">Rp 0</h5>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="card p-3">
+          <h4>Pemasukan</h4>
+          <h5 id="incomeTotal">Rp 0</h5>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="card p-3">
+          <h4>Pengeluaran</h4>
+          <h5 id="expenseTotal">Rp 0</h5>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Tabel Catatan Keuangan -->
+<div id="transactionTable" class="mt-4" style="display: none;">
+  <table class="table table-bordered table-striped text-center">
+    <thead>
+      <tr>
+        <th>Tanggal</th>
+        <th>Jenis</th>
+        <th>Nominal</th>
+        <th>Kategori</th>
+        <th>Deskripsi</th>
+        <th>Aksi</th> <!-- Kolom baru untuk tombol edit -->
+      </tr>
+    </thead>
+    <tbody id="transactionBody">
+      <!-- Data catatan akan ditambahkan di sini -->
+    </tbody>
+  </table>
+</div>
+
+<!-- Pesan Teks jika tidak ada catatan -->
+<div id="noRecordMessage" class="text-center mt-4">
+  <p>Kamu belum buat catatan apapun, nih!</p>
+</div>
+
+<!-- Tombol Add -->
+<div class="add-button" data-bs-toggle="modal" data-bs-target="#addRecordModal">+</div>
+
+<!-- Modal Add Catatan -->
+<div class="modal fade" id="addRecordModal" tabindex="-1" aria-labelledby="addRecordModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addRecordModalLabel">Tambah Catatan Keuangan</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="addRecordForm">
+          <div class="mb-3">
+            <label for="date" class="form-label">Tanggal</label>
+            <input type="date" class="form-control" id="date" required>
+          </div>
+          <div class="mb-3">
+            <label for="type" class="form-label">Jenis</label>
+            <select class="form-select" id="type" required>
+              <option value="pemasukan">Pemasukan</option>
+              <option value="pengeluaran">Pengeluaran</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="nominal" class="form-label">Nominal</label>
+            <input type="number" class="form-control" id="nominal" required>
+          </div>
+          <div class="mb-3">
+            <label for="category" class="form-label">Kategori</label>
+            <select class="form-select" id="category" required>
+              <option value="makanan">Makanan</option>
+              <option value="minuman">Minuman</option>
+              <option value="transportasi">Transportasi</option>
+              <option value="pakaian">Pakaian</option>
+              <option value="pulsa">Pulsa</option>
+              <option value="tagihan">Tagihan</option>
+              <option value="belanja">Belanja</option>
+              <option value="gaji">Gaji</option>
+              <option value="lainnya">Lainnya</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label">Deskripsi</label>
+            <textarea class="form-control" id="description" rows="3"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-primary" id="saveRecordBtn">Buat</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Edit Catatan -->
+<div class="modal fade" id="editRecordModal" tabindex="-1" aria-labelledby="editRecordModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editRecordModalLabel">Edit Catatan Keuangan</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editRecordForm">
+          <div class="mb-3">
+            <label for="editDate" class="form-label">Tanggal</label>
+            <input type="date" class="form-control" id="editDate" required>
+          </div>
+          <div class="mb-3">
+            <label for="editType" class="form-label">Jenis</label>
+            <select class="form-select" id="editType" required>
+              <option value="pemasukan">Pemasukan</option>
+              <option value="pengeluaran">Pengeluaran</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="editNominal" class="form-label">Nominal</label>
+            <input type="number" class="form-control" id="editNominal" required>
+          </div>
+          <div class="mb-3">
+            <label for="editCategory" class="form-label">Kategori</label>
+            <select class="form-select" id="editCategory" required>
+              <option value="makanan">Makanan</option>
+              <option value="minuman">Minuman</option>
+              <option value="transportasi">Transportasi</option>
+              <option value="pakaian">Pakaian</option>
+              <option value="pulsa">Pulsa</option>
+              <option value="tagihan">Tagihan</option>
+              <option value="belanja">Belanja</option>
+              <option value="gaji">Gaji</option>
+              <option value="lainnya">Lainnya</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="editDescription" class="form-label">Deskripsi</label>
+            <textarea class="form-control" id="editDescription" rows="3"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-primary" id="updateRecordBtn">Simpan Perubahan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+
+
+  <!-- Link Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+  document.getElementById("saveRecordBtn").addEventListener("click", function () {
+  // Ambil data dari form
+  const date = document.getElementById("date").value;
+  const type = document.getElementById("type").value;
+  const nominal = document.getElementById("nominal").value;
+  const category = document.getElementById("category").value;
+  const description = document.getElementById("description").value;
+
+  // Validasi data
+  if (!date || !nominal || isNaN(nominal) || nominal <= 0 || !category) {
+    alert("Pastikan semua data sudah diisi dengan benar dan nominal harus lebih dari 0!");
+    return;
+  }
+
+  const tableBody = document.getElementById("transactionBody");
+  const row = document.createElement("tr");
+
+  // Tambahkan catatan baru ke tabel
+  row.innerHTML = `
+    <td>${date}</td>
+    <td>${type}</td>
+    <td>Rp${parseInt(nominal).toLocaleString()}</td>
+    <td>${category}</td>
+    <td>${description}</td>
+    <td>
+      <button class="btn btn-warning btn-sm" onclick="editRecord(this)">Edit</button>
+      <button class="btn btn-warning btn-sm" onclick="deleteRecord(this)">Hapus</button>
+    </td>
+  `;
+  tableBody.appendChild(row);
+
+  // Tampilkan tabel jika sebelumnya kosong
+  document.getElementById("transactionTable").style.display = "block";
+  document.getElementById("noRecordMessage").style.display = "none";
+
+  // Reset form setelah data ditambahkan
+  document.getElementById("addRecordForm").reset();
+  const modal = bootstrap.Modal.getInstance(document.getElementById("addRecordModal"));
+  updateTotal();
+  modal.hide();
+});
+
+let currentEditingRow;
+
+// Fungsi untuk mengisi modal edit dengan data catatan
+function editRecord(button) {
+  const row = button.closest("tr");
+  const cells = row.querySelectorAll("td");
+
+  document.getElementById("editDate").value = cells[0].textContent;
+  document.getElementById("editType").value = cells[1].textContent.toLowerCase();
+  document.getElementById("editNominal").value = cells[2].textContent.replace(/Rp|, /g, '');
+  document.getElementById("editCategory").value = cells[3].textContent.toLowerCase();
+  document.getElementById("editDescription").value = cells[4].textContent;
+
+  // Tampilin modal edit
+  const modal = new bootstrap.Modal(document.getElementById("editRecordModal"));
+  modal.show();
+
+  // Tambahkan event listener untuk menyimpan perubahan
+  document.getElementById("updateRecordBtn").addEventListener("click", function () {
+    if (!currentEditingRow) return;
+
+    const cells = currentEditingRow.querySelectorAll("td");
+    // Update data di tabel
+    cells[0].textContent = document.getElementById("editDate").value;
+    cells[1].textContent = document.getElementById("editType").value;
+    cells[2].textContent = `Rp${parseInt(document.getElementById("editNominal").value).toLocaleString()}`;
+    cells[3].textContent = document.getElementById("editCategory").value;
+    cells[4].textContent = document.getElementById("editDescription").value;
+
+    updateTotal();
+
+    const modal= bootstrap.Modal.getInstance(document.getElementById("editRecordModal"));
+    // Tutup modal
+    modal.hide();
+
+    currentEditingRow = null;
+  });
+}
+
+function deleteRecord(button) {
+  // Ambil baris yang berisi tombol hapus
+  const row = button.closest('tr');
+  
+  // Hapus baris dari tabel
+  row.remove();
+
+   // Cek apakah tabel kosong
+   const tableBody = document.getElementById("transactionBody");
+  if (tableBody.rows.length === 0) {
+    document.getElementById("transactionTable").style.display = "none";
+    document.getElementById("noRecordMessage").style.display = "block";
+  }
+
+  // Perbarui total setelah penghapusan
+  updateTotal();
+}
+
+// Fungsi untuk memperbarui total pemasukan, pengeluaran, dan saldo
+function updateTotal() {
+  let incomeTotal = 0;
+  let expenseTotal = 0;
+
+  const tableBody = document.getElementById("transactionBody");
+  for (const row of tableBody.rows) {
+    const type = row.cells[1].textContent.toLowerCase();
+    const nominal = parseInt(row.cells[2].textContent.replace(/Rp|,|\s/g, ''));
+
+    if (type === "pemasukan") {
+      incomeTotal += nominal;
+    } else if (type === "pengeluaran") {
+      expenseTotal += nominal;
+    }
+  }
+
+  // Hitung saldo
+  const balanceTotal = incomeTotal - expenseTotal;
+
+  // Perbarui tampilan total
+  document.getElementById("incomeTotal").textContent = `Rp ${incomeTotal.toLocaleString()}`;
+  document.getElementById("expenseTotal").textContent = `Rp ${expenseTotal.toLocaleString()}`;
+  document.getElementById("balanceTotal").textContent = `Rp ${balanceTotal.toLocaleString()}`;
+}
+        // Initial balance update
+        updateTotal();
+
+  </script>
+</body>
+</html>
